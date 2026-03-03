@@ -1,5 +1,2 @@
-flask
-waitress
-pyodbc
-flet
 requests
+
