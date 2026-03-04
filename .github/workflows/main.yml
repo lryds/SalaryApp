@@ -13,41 +13,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'   # ← 必须指定 3.11，不要用 3.12+
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Upgrade pip and install flet
         run: |
           python -m pip install --upgrade pip
-          pip install flet==0.24.1
-          pip install requests
+          pip install "flet==0.24.1"
+          pip install "requests"
+          pip install "urllib3==1.26.20"
 
-      - name: Setup Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'        # ← flet build android 需要 Java 21
+          java-version: '21'
 
-      - name: Setup Flutter
+      - name: Setup Flutter 3.24.5
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.5' # ← 与 flet 0.24.1 匹配的 Flutter 版本
+          flutter-version: '3.24.5'
           channel: 'stable'
           cache: true
 
-      - name: Install Android SDK cmdline-tools
+      - name: Accept Android licenses
         run: |
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
             "platforms;android-34" \
-            "build-tools;34.0.0"
+            "build-tools;34.0.0" || true
+
+      - name: Disable Flutter analytics
+        run: flutter config --no-analytics
 
       - name: Build APK
-        run: |
-          flet build apk --no-rich-output
+        run: flet build apk --no-rich-output
 
-      - name: Upload APK artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: salary-apk
