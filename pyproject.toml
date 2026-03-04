@@ -1,7 +1,0 @@
-[tool.flet]
-app_name = "薪酬查询"
-app_version = "1.0.0"
-org = "com.yourcompany"   # ← 改成你自己的包名
-
-[tool.flet.android]
-min_sdk_version = 21
